@@ -8,12 +8,14 @@ from aiogram.filters import CommandStart
 TOKEN = os.getenv("BOT_TOKEN")
 dp = Dispatcher()
 
+# Botning o'ziga /start bosilganda javob berish uchun
 @dp.message(CommandStart())
 async def command_start_handler(message: types.Message):
-    await message.answer("Salom! Men Elbekning avtomatik biznes yordamchisiman. Hozir bandman, tez orada o'zim aloqaga chiqaman!")
+    await message.answer("Salom! Men Elbekning avtomatik biznes yordamchisiman.")
 
-@dp.message()
-async def auto_reply_handler(message: types.Message) -> None:
+# Telegram Business orqali keladigan xabarlarga avtomatik javob berish uchun
+@dp.business_message()
+async def business_auto_reply(message: types.Message):
     try:
         await message.answer("Xabaringiz uchun rahmat! Hozirda avtomatik rejimdaman, xabaringiz qayd etildi va tez orada o'zim javob yozaman.")
     except Exception as e:
