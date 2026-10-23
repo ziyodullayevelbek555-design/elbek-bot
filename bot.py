@@ -2,11 +2,28 @@ import asyncio
 import logging
 import os
 import sys
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import CommandStart
 
 TOKEN = os.getenv("BOT_TOKEN")
 dp = Dispatcher()
+
+# Render portini ochib turish uchun mini-server
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Bot is active!")
+
+def start_server():
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(('0.0.0.0', port), HealthCheckHandler)
+    server.serve_forever()
+
+# Serverni alohida oqimda ishga tushiramiz
+threading.Thread(target=start_server, daemon=True).start()
 
 @dp.message(CommandStart())
 async def command_start_handler(message: types.Message):
